@@ -1,14 +1,35 @@
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-const path = require('path');
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   entry: "./bootstrap.js",
-  output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "bootstrap.js",
+  experiments: {
+    asyncWebAssembly: true,
   },
-  mode: "development",
+  output: {
+    path: path.resolve(__dirname, "./dist"),
+    filename: "[name].[contenthash].js",
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        resolve: {
+          extensions: [".js", ".jsx"]
+        },
+        use: {
+          loader: "babel-loader",
+        },
+      },
+    ],
+  },
   plugins: [
-    new CopyWebpackPlugin(['index.html'])
+    new HtmlWebpackPlugin({
+      template: "./index.html",
+      filename: "./index.html",
+    }),
   ],
+  mode: "development",
+  devtool: "inline-source-map",
 };
