@@ -12,13 +12,17 @@ macro_rules! log {
 }
 mod linkedlist;
 mod solver;
+mod timer;
 mod utils;
 
 use linkedlist::TrieLinkedList;
 use solver::{find_best, Board};
 use wasm_bindgen::prelude::*;
 
-use crate::solver::{board_from_string, Pos};
+use crate::{
+    solver::{board_from_string, Pos},
+    timer::Timer,
+};
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -42,6 +46,12 @@ lazy_static! {
 }
 
 #[wasm_bindgen]
+pub fn init() {
+    // initialize dict
+    lazy_static::initialize(&DICT_EN);
+}
+
+#[wasm_bindgen]
 pub struct Solver {
     path: String,
     word: String,
@@ -57,6 +67,7 @@ impl Solver {
     }
 
     pub fn solve(&mut self, word: String) {
+        let _timer = Timer::new("Solver::solve");
         let best = find_best(&*DICT_EN, &board_from_string(word));
         self.word = best.0;
         self.path = best
@@ -65,7 +76,6 @@ impl Solver {
             .map(|p| format!("{},{}", p.0, p.1))
             .collect::<Vec<String>>()
             .join("|");
-        log!("{}", self.word.len());
     }
 
     pub fn path(&self) -> String {

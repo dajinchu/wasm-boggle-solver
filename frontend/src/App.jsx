@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Board } from "./Board";
-import { Solver } from "wasm-boggle-solver";
+import { init, Solver } from "wasm-boggle-solver";
 
 export function App() {
-  const width = 10;
-  const height = 10;
+  const width = 20;
+  const height = 20;
   const [path, setPath] = useState([]);
+
+  useEffect(() => setTimeout(() => init(), 0), []);
   return (
     <Board
       width={width}

@@ -8,7 +8,7 @@ const REGEX = /^[A-Za-z]$/;
 export function Board({ width, height, path, onChange: reportChange }) {
   const [chars, setChars] = useState({});
   const cellsRef = useRef({});
-  const word = path.map(i=>chars[i]).join("");
+  const word = path.map((i) => chars[i]).join("");
 
   function recalculateChars() {
     let newChars = objectMap(
@@ -37,8 +37,16 @@ export function Board({ width, height, path, onChange: reportChange }) {
       focus(row, col + 1);
     } else if (key === "ArrowUp") {
       focus(row - 1, col);
-    } else if (key === "ArrowDown" || key === "Enter") {
+    } else if (key === "ArrowDown") {
       focus(row + 1, col);
+    } else if (key === "Enter") {
+      const leftMost = Math.min(
+        0,
+        ...Object.entries(cellsRef.current)
+          .filter(([k, v]) => !!v.value)
+          .map(([k, _]) => parseInt(k.split(",")[0]))
+      );
+      focus(row + 1, leftMost);
     }
   }
   function onChange({ target }, row, col) {
@@ -62,6 +70,7 @@ export function Board({ width, height, path, onChange: reportChange }) {
               .map((_, col) => (
                 <Cell
                   key={col}
+                  autofocus={row==0&&col==0}
                   highlight={!!path.find(([r, c]) => r === row && c === col)}
                   value={chars[[row, col]]}
                   onKeyDown={(e) => onKeyDown(e, row, col)}

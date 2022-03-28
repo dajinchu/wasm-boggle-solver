@@ -1,7 +1,7 @@
 import React from "react";
 
 export const Cell = React.forwardRef(function Cell(
-  { onKeyDown, onChange, value, highlight },
+  { autofocus, onKeyDown, onChange, value, highlight },
   ref
 ) {
   const bg = highlight
@@ -11,11 +11,11 @@ export const Cell = React.forwardRef(function Cell(
     : "bg-stone-800";
   return (
     <input
+      autoFocus={autofocus}
       onKeyDown={onKeyDown}
       onChange={onChange}
       onFocus={({ target }) => {
-        console.log("focus")
-        setTimeout(() => target === document.activeElement && target.select(), 0);
+        setTimeout(() => target.activeElement && target.select(), 0);
       }}
       maxLength="1"
       className={`w-20 h-20 border border-stone-300 focus:outline-none text-center text-4xl ${bg} focus:bg-slate-400`}
