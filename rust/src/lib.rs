@@ -1,7 +1,5 @@
-#![feature(test)]
 #[macro_use]
 extern crate lazy_static;
-extern crate test;
 extern crate web_sys;
 
 // A macro to provide `println!(..)`-style syntax for `console.log` logging.

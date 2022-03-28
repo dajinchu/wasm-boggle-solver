@@ -115,7 +115,6 @@ fn neighbors(board: &Board, pos: Pos) -> Vec<Pos> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test::Bencher;
 
     // fn make_dict() -> impl Trie {
     //     TrieLinkedListArena::from_file("./words_alpha.txt").unwrap()
@@ -157,16 +156,5 @@ mod tests {
                 vec![(0, 0), (0, 1), (0, 2), (0, 3), (0, 4)]
             )
         );
-    }
-
-    #[bench]
-    fn bench_solver(b: &mut Bencher) {
-        let words = TrieLinkedList::from_file("./words_alpha.txt").unwrap();
-        let board = vec![
-            vec!['x', 'y', 'q'],
-            vec!['h', ' ', 'o'],
-            vec!['e', 'l', 'l'],
-        ];
-        b.iter(|| find_best(&words, &board));
     }
 }

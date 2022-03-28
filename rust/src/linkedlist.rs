@@ -126,7 +126,6 @@ impl TrieLinkedList {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test::Bencher;
 
     #[test]
     fn simple_test() {
@@ -163,10 +162,5 @@ mod tests {
         //     stack.append(&mut dict.child.values().collect())
         // }
         // assert_eq!(count, 1027815);
-    }
-
-    #[bench]
-    fn bench_build_dict(b: &mut Bencher) {
-        b.iter(|| TrieLinkedList::from_file("./words_alpha.txt").unwrap())
     }
 }
