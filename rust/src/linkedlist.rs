@@ -52,7 +52,6 @@ impl TrieLinkedList {
     pub fn add_word(&mut self, word: &str) {
         let mut cursor = self;
         let mut chars = word.chars().peekable().enumerate();
-        let debug = word.starts_with("spoon");
         // println!("adding word {}", word);
         while let Some((i, c)) = chars.next() {
             match cursor.child {

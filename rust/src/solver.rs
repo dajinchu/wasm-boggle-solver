@@ -4,6 +4,14 @@ pub type Board = Vec<Vec<char>>;
 // Row, Col format
 pub type Pos = (usize, usize);
 
+pub fn board_from_string(str: String) -> Board {
+    let mut board: Board = Vec::new();
+    for row in str.lines() {
+        board.push(row.chars().collect::<Vec<char>>());
+    }
+    board
+}
+
 // Find longest word in the board
 pub fn find_best(words: &TrieLinkedList, board: &Board) -> (String, Vec<Pos>) {
     let mut best = ("".to_string(), Vec::new());
@@ -50,13 +58,7 @@ fn find_best_acc(
                 .iter()
                 .filter(|p| !path.contains(*p))
                 .filter_map(|p| {
-                    find_best_acc(
-                        dict,
-                        board,
-                        *p,
-                        &mut word_so_far.clone(),
-                        &mut path.clone(),
-                    )
+                    find_best_acc(dict, board, *p, &mut word_so_far.clone(), &mut path.clone())
                 })
                 .max_by(|x, y| x.1.len().cmp(&y.1.len()));
             // println!("word so far: {:} best: {:?}", word_so_far, best);
@@ -86,11 +88,9 @@ fn neighbors(board: &Board, pos: Pos) -> Vec<Pos> {
     if row > 0 {
         if col > 0 {
             v.push((row - 1, col - 1));
-            v.push((row, col - 1));
         }
         if col + 1 < width {
             v.push((row - 1, col + 1));
-            v.push((row, col + 1));
         }
         v.push((row - 1, col));
     }
@@ -103,37 +103,70 @@ fn neighbors(board: &Board, pos: Pos) -> Vec<Pos> {
         }
         v.push((row + 1, col));
     }
+    if col > 0 {
+        v.push((row, col - 1));
+    }
+    if col + 1 < width {
+        v.push((row, col + 1));
+    }
     v
 }
 
 #[cfg(test)]
 mod tests {
-    use test::Bencher;
     use super::*;
+    use test::Bencher;
 
     // fn make_dict() -> impl Trie {
     //     TrieLinkedListArena::from_file("./words_alpha.txt").unwrap()
     // }
 
     #[test]
-    fn it_works() {
-    let words = TrieLinkedList::from_file("./words_alpha.txt").unwrap();
+    fn board_from_string_works() {
+        assert_eq!(
+            board_from_string("hey\nbro".to_string()),
+            vec![vec!['h', 'e', 'y'], vec!['b', 'r', 'o']]
+        );
+    }
+
+    #[test]
+    fn solve_3by3() {
+        let words = TrieLinkedList::from_file("./words_alpha.txt").unwrap();
         let board = vec![
             vec!['x', 'y', 'q'],
             vec!['h', ' ', 'o'],
             vec!['e', 'l', 'l'],
         ];
-        assert_eq!(find_best(&words, &board), ("hello".to_string(), vec![(1,0),(2,0),(2,1),(2,2),(1,2)]));
+        assert_eq!(
+            find_best(&words, &board),
+            (
+                "hello".to_string(),
+                vec![(1, 0), (2, 0), (2, 1), (2, 2), (1, 2)]
+            )
+        );
+    }
+
+    #[test]
+    fn solve_single_row() {
+        let words = TrieLinkedList::from_file("./words_alpha.txt").unwrap();
+        let board = vec![vec!['h', 'e', 'l', 'l', 'o']];
+        assert_eq!(
+            find_best(&words, &board),
+            (
+                "hello".to_string(),
+                vec![(0, 0), (0, 1), (0, 2), (0, 3), (0, 4)]
+            )
+        );
     }
 
     #[bench]
     fn bench_solver(b: &mut Bencher) {
-    let words = TrieLinkedList::from_file("./words_alpha.txt").unwrap();
+        let words = TrieLinkedList::from_file("./words_alpha.txt").unwrap();
         let board = vec![
             vec!['x', 'y', 'q'],
             vec!['h', ' ', 'o'],
             vec!['e', 'l', 'l'],
         ];
-        b.iter(||find_best(&words, &board));
+        b.iter(|| find_best(&words, &board));
     }
 }

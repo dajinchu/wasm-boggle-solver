@@ -2,12 +2,23 @@
 #[macro_use]
 extern crate lazy_static;
 extern crate test;
+extern crate web_sys;
+
+// A macro to provide `println!(..)`-style syntax for `console.log` logging.
+macro_rules! log {
+    ( $( $t:tt )* ) => {
+        web_sys::console::log_1(&format!( $( $t )* ).into());
+    }
+}
 mod linkedlist;
 mod solver;
 mod utils;
 
 use linkedlist::TrieLinkedList;
+use solver::{find_best, Board};
 use wasm_bindgen::prelude::*;
+
+use crate::solver::{board_from_string, Pos};
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -31,6 +42,33 @@ lazy_static! {
 }
 
 #[wasm_bindgen]
-pub fn is_word(word: String) -> bool {
-    DICT_EN.traverse(&word).map_or(false, |d| d.is_word())
+pub struct Solver {
+    path: String,
+    word: String,
+}
+
+#[wasm_bindgen]
+impl Solver {
+    pub fn new() -> Solver {
+        Solver {
+            word: String::new(),
+            path: String::new(),
+        }
+    }
+
+    pub fn solve(&mut self, word: String) {
+        let best = find_best(&*DICT_EN, &board_from_string(word));
+        self.word = best.0;
+        self.path = best
+            .1
+            .iter()
+            .map(|p| format!("{},{}", p.0, p.1))
+            .collect::<Vec<String>>()
+            .join("|");
+        log!("{}", self.word.len());
+    }
+
+    pub fn path(&self) -> String {
+        self.path.clone()
+    }
 }

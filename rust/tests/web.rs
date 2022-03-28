@@ -4,10 +4,14 @@
 
 extern crate wasm_bindgen_test;
 use wasm_bindgen_test::*;
+extern crate wasm_boggle_solver;
+use wasm_boggle_solver::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
 
 #[wasm_bindgen_test]
-fn pass() {
-    assert_eq!(1 + 1, 2);
+fn test_solve() {
+    let mut solver = Solver::new();
+    solver.solve("dfjhello".to_string());
+    assert_eq!(solver.path(), "hello");
 }
