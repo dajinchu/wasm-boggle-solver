@@ -16,11 +16,17 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         resolve: {
-          extensions: [".js", ".jsx"]
+          extensions: [".js", ".jsx"],
         },
         use: {
           loader: "babel-loader",
+          options: { presets: ["@babel/preset-env"] },
         },
+      },
+      {
+        test: /\.css$/i,
+        include: path.resolve(__dirname, "src"),
+        use: ["style-loader", "css-loader", "postcss-loader"],
       },
     ],
   },
