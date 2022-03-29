@@ -17,6 +17,7 @@ export const Cell = React.forwardRef(function Cell(
       onFocus={({ target }) => {
         setTimeout(() => document.activeElement === target && target.select(), 0);
       }}
+      value={value}
       maxLength="1"
       className={`w-20 h-20 border border-stone-300 focus:outline-none text-center text-4xl ${bg} focus:bg-slate-400`}
       ref={ref}

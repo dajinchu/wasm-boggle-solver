@@ -1,4 +1,4 @@
-use crate::linkedlist::TrieLinkedList;
+use crate::{linkedlist::TrieLinkedList, timer::Timer};
 
 pub type Board = Vec<Vec<char>>;
 // Row, Col format
@@ -14,6 +14,8 @@ pub fn board_from_string(str: String) -> Board {
 
 // Find longest word in the board
 pub fn find_best(words: &TrieLinkedList, board: &Board) -> (String, Vec<Pos>) {
+
+    let _timer = Timer::new("find_best");
     let mut best = ("".to_string(), Vec::new());
     let height = board.len();
     let width = board[0].len();
