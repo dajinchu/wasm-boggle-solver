@@ -71,12 +71,20 @@ export function Board({ width, height, path, onChange: reportChange }) {
   return (
     <div>
       <div className="flex flex-row items-center py-2">
-        <div className="text-xl mr-4">The word: {word}</div>
+        <div className="text-xl">The word: {word}</div>
+        <button
+          onClick={() => {
+            setChars({});
+          }}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-4 rounded"
+        >
+          Clear
+        </button>
         <button
           onClick={() => {
             setChars(randomBoard(width, height));
           }}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-4 rounded"
         >
           Randomize
         </button>
@@ -87,17 +95,23 @@ export function Board({ width, height, path, onChange: reportChange }) {
           <div key={row} className="flex flex-row">
             {Array(width)
               .fill()
-              .map((_, col) => (
-                <Cell
-                  key={col}
-                  autofocus={row == 0 && col == 0}
-                  highlight={!!path.find(([r, c]) => r === row && c === col)}
-                  value={chars[[row, col]] || ""}
-                  onKeyDown={(e) => onKeyDown(e, row, col)}
-                  onChange={(e) => onChange(e, row, col)}
-                  ref={(el) => (cellsRef.current[[row, col]] = el)}
-                />
-              ))}
+              .map((_, col) => {
+                const idx = path.findIndex(([r, c]) => r === row && c === col);
+                const prev = idx !== -1 && path[idx - 1];
+                const next = idx !== -1 && path[idx + 1];
+                return (
+                  <Cell
+                    key={col}
+                    autofocus={row == 0 && col == 0}
+                    pathIn={!!prev && [prev[0] - row, prev[1] - col]}
+                    pathOut={!!next && [next[0] - row, next[1] - col]}
+                    value={chars[[row, col]] || ""}
+                    onKeyDown={(e) => onKeyDown(e, row, col)}
+                    onChange={(e) => onChange(e, row, col)}
+                    ref={(el) => (cellsRef.current[[row, col]] = el)}
+                  />
+                );
+              })}
           </div>
         ))}
     </div>
